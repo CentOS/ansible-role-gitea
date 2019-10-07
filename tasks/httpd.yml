@@ -1,0 +1,37 @@
+- import_role:                                                                                                    
+    name: httpd
+  when: not gitea_https
+
+- import_role:
+    name: httpd
+  vars:
+    httpd_tls: True
+  when: gitea_https
+
+- name: Configuring httpd for gitea
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/httpd/conf.d/{{ item }}"
+  notify:
+    - restart_httpd
+  with_items:
+    - 02_gitea.conf
+
+- name: Configuring https for gitea
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/httpd/conf.d/{{ item }}"
+  notify:
+    - restart_httpd
+  with_items:
+    - ssl-gitea.conf
+  when: gitea_https  
+   
+- import_role:
+    name: httpd
+    tasks_from: pki-tls
+  vars:
+    pki_hostname: "{{ gitea_public_hostname }}"
+  tags:
+    - tls
+  when: gitea_https  

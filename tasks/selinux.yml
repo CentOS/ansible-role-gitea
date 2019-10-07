@@ -1,0 +1,7 @@
+- name: needed selinux booleans
+  seboolean:
+    name: "{{ item }}"
+    persistent: yes
+    state: True
+  with_items:
+    - httpd_can_network_connect

@@ -1,1 +1,9 @@
 # Defaults variables for role gitea
+
+gitea_db_user: gitea
+gitea_db_pass: 9qqHPWRSAZBt8npr1r 
+gitea_db_name: gitea
+
+# Http/apache settings
+gitea_https: True
+gitea_public_hostname: "{{ inventory_hostname }}"

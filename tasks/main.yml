@@ -1,1 +1,27 @@
 # Defaults tasks for role gitea
+
+- include_tasks: httpd.yml
+  tags:
+    - tls
+- include_tasks: selinux.yml
+- include_tasks: db.yml
+
+- name: Ensuring pkgs are installed for gitea
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - git
+    - gitea
+
+- name: Ensuring gitea is started and enabled
+  service:
+    name: gitea
+    state: started
+    enabled: True
+
+- name: Ensuring backup user and jobs
+  include_role:
+    name: centos-backup
+    tasks_from: client
+    

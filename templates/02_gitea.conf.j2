@@ -1,0 +1,24 @@
+<VirtualHost *:80>
+   ServerName {{ gitea_public_hostname }}
+   DocumentRoot /var/www/html/
+   CustomLog logs/{{ gitea_public_hostname }}.log combined
+   ErrorLog logs/{{ gitea_public_hostname }}_error.log
+
+{% if gitea_https %}
+   RewriteEngine On
+   RewriteCond $1 !^.well-known
+   RewriteCond %{HTTPS} !=on
+   RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+{% endif %} 
+  <Location "/.well-known/acme-challenge/">
+    ProxyPass "http://cephas.centos.org/.well-known/acme-challenge/"
+  </Location>
+
+   
+    ProxyPreserveHost On
+    ProxyRequests off
+    ProxyPass / http://127.0.0.1:3000/
+    ProxyPassReverse / http://127.0.0.1:3000/
+
+</VirtualHost>
+
